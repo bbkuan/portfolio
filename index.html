@@ -3,40 +3,40 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kychen｜名片</title>
-<meta name="description" content="Kychen 的聯絡方式與名片資訊">
-<meta property="og:title" content="Kychen｜名片">
-<meta property="og:description" content="聯絡方式與名片資訊">
+<title>陳冠宇 Kuanyu Chen</title>
+<meta name="description" content="陳冠宇 Kuanyu Chen — Game Production・Live-Ops Strategy・Agentic AI Consulting">
+<meta property="og:title" content="陳冠宇 Kuanyu Chen">
+<meta property="og:description" content="Game Production・Live-Ops Strategy・Agentic AI Consulting">
 <meta property="og:type" content="profile">
 <meta name="theme-color" content="#f4f1ea" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#14161a" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23c8402a'/%3E%3Ctext x='32' y='45' font-size='38' font-family='Georgia,serif' font-weight='700' text-anchor='middle' fill='%23fff'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23c8402a'/%3E%3Ctext x='32' y='42' font-size='26' font-family='Georgia,serif' font-weight='700' text-anchor='middle' fill='%23fff'%3EKC%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f4f1ea;
-    --card: #fffdf8;
+    --surface: #fffdf8;
     --ink: #16181d;
     --muted: #6b6a66;
-    --line: #e2ddd2;
-    --seal: #c8402a;
-    --seal-ink: #fffdf8;
+    --line: #dcd6c9;
+    --accent: #c8402a;
+    --on-accent: #fffdf8;
     --hover: #f0ebe0;
-    --shadow: 0 1px 2px rgba(22, 24, 29, .06), 0 18px 40px -18px rgba(22, 24, 29, .28);
+    --shadow: 0 1px 2px rgba(22, 24, 29, .05), 0 10px 24px -14px rgba(22, 24, 29, .3);
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #14161a;
-      --card: #1c1f25;
+      --surface: #1c1f25;
       --ink: #ece8df;
       --muted: #9a978f;
-      --line: #2c3038;
-      --seal: #e0553d;
-      --seal-ink: #14161a;
-      --hover: #242830;
-      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 18px 40px -18px rgba(0, 0, 0, .7);
+      --line: #2f333c;
+      --accent: #e0553d;
+      --on-accent: #14161a;
+      --hover: #252931;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 24px -14px rgba(0, 0, 0, .8);
     }
   }
   * { box-sizing: border-box; }
@@ -48,248 +48,343 @@
     background: var(--bg);
     color: var(--ink);
     font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
-    line-height: 1.6;
-    display: grid;
-    place-items: center;
-    padding: 32px 16px 48px;
+    line-height: 1.55;
+    padding: 16px 16px 48px;
   }
-  main { width: 100%; max-width: 460px; }
+  .wrap { width: 100%; max-width: 440px; margin: 0 auto; }
 
-  /* ── 名片本體 ─────────────────────────── */
-  .card {
-    position: relative;
-    background: var(--card);
+  /* ── 語言切換 ─────────────────────────── */
+  .topbar { display: flex; justify-content: flex-end; }
+  .lang {
+    display: inline-flex;
+    padding: 3px;
     border: 1px solid var(--line);
-    border-radius: 14px;
-    box-shadow: var(--shadow);
-    padding: 28px 28px 24px;
-    aspect-ratio: 90 / 54;           /* 標準名片比例 */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow: hidden;
+    border-radius: 999px;
+    background: var(--surface);
   }
-  .card::after {                      /* 右下角的細格線裝飾 */
-    content: "";
-    position: absolute;
-    right: -40px; bottom: -40px;
-    width: 180px; height: 180px;
-    background:
-      linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 18px 18px,
-      linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 18px 18px;
-    -webkit-mask-image: radial-gradient(circle at 100% 100%, #000 0, transparent 70%);
-            mask-image: radial-gradient(circle at 100% 100%, #000 0, transparent 70%);
-    pointer-events: none;
+  .lang button {
+    font: inherit; font-size: 13px; font-weight: 500;
+    min-width: 46px;
+    padding: 5px 12px;
+    border: 0; border-radius: 999px;
+    background: transparent; color: var(--muted);
+    cursor: pointer;
   }
-  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
-  .seal {
-    flex: none;
-    width: 46px; height: 46px;
-    border-radius: 8px;
-    background: var(--seal);
-    color: var(--seal-ink);
+  .lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+  /* ── 個人資訊 ─────────────────────────── */
+  .profile { text-align: center; padding: 28px 0 26px; }
+  .avatar {
+    width: 96px; height: 96px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--on-accent);
     display: grid; place-items: center;
     font-family: "Fraunces", Georgia, serif;
-    font-weight: 700;
-    font-size: 26px;
-    line-height: 1;
-    transform: rotate(-4deg);
+    font-weight: 700; font-size: 34px; letter-spacing: .02em;
+    box-shadow: 0 0 0 4px var(--bg), 0 0 0 5px var(--line);
+    overflow: hidden;
   }
-  .org {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-size: 11px;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-align: right;
-    padding-top: 4px;
-  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
   h1 {
     margin: 0;
-    font-family: "Fraunces", Georgia, serif;
+    font-family: "Fraunces", "Noto Serif TC", Georgia, serif;
     font-weight: 700;
-    font-size: clamp(34px, 10vw, 46px);
-    line-height: 1.05;
-    letter-spacing: -.01em;
+    font-size: 30px;
+    line-height: 1.2;
   }
-  .native { margin: 4px 0 0; font-size: 15px; font-weight: 500; letter-spacing: .12em; }
-  .role { margin: 10px 0 0; font-size: 14px; color: var(--muted); }
+  .alt-name { margin: 4px 0 0; font-size: 15px; color: var(--muted); letter-spacing: .04em; }
+  .tagline {
+    margin: 14px auto 0;
+    font-size: 14px;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 0;
+  }
+  .tagline span { white-space: nowrap; }
+  .tagline span:not(:last-child)::after { content: "・"; color: var(--accent); }
 
-  /* ── 聯絡方式列表 ─────────────────────── */
-  .contacts { list-style: none; margin: 20px 0 0; padding: 0; }
-  .contacts li + li { margin-top: 8px; }
-  .row {
-    display: flex; align-items: center; gap: 14px;
+  /* ── 連結按鈕（Linktree 式）──────────────── */
+  .links { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .link {
+    position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
     width: 100%;
-    padding: 12px 14px;
-    background: var(--card);
+    min-height: 62px;
+    padding: 10px 56px;
+    background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 12px;
-    color: inherit;
-    text-decoration: none;
-    transition: background .15s, border-color .15s, transform .15s;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    color: inherit; text-decoration: none; text-align: center;
+    font: inherit;
+    cursor: pointer;
+    transition: transform .15s, background .15s, border-color .15s;
   }
-  .row:hover { background: var(--hover); border-color: var(--muted); transform: translateY(-1px); }
-  .row:focus-visible, button:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
-  .row svg { flex: none; width: 20px; height: 20px; color: var(--seal); }
-  .row .text { min-width: 0; flex: 1; }
-  .row .label {
-    display: block;
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--muted);
+  .link:hover { transform: translateY(-2px); background: var(--hover); border-color: var(--muted); }
+  .link:active { transform: translateY(0); }
+  .link:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .link svg {
+    position: absolute; left: 20px; top: 50%;
+    width: 22px; height: 22px; margin-top: -11px;
+    color: var(--accent);
   }
-  .row .value { display: block; font-size: 15px; font-weight: 500; overflow-wrap: anywhere; }
-  .row .arrow { flex: none; color: var(--muted); font-size: 14px; }
+  .link.pending { cursor: default; border-style: dashed; box-shadow: none; background: transparent; }
+  .link.pending:hover { transform: none; background: transparent; border-color: var(--line); }
+  .link.pending svg, .link.pending .title { opacity: .55; }
+  .link .title { font-size: 15px; font-weight: 700; }
+  .link .sub { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
 
   /* ── 動作按鈕 ─────────────────────────── */
-  .actions { display: flex; gap: 8px; margin-top: 16px; }
-  button {
+  .actions { display: flex; gap: 10px; margin-top: 20px; }
+  .actions button {
     flex: 1;
     font: inherit; font-size: 14px; font-weight: 500;
-    padding: 12px 14px;
-    border-radius: 12px;
+    padding: 13px 14px;
+    border-radius: 999px;
     border: 1px solid var(--ink);
-    background: var(--ink);
-    color: var(--bg);
+    background: var(--ink); color: var(--bg);
     cursor: pointer;
-    transition: opacity .15s;
+    transition: opacity .15s, background .15s;
   }
-  button:hover { opacity: .85; }
-  button.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
-  button.ghost:hover { background: var(--hover); opacity: 1; }
+  .actions button:hover { opacity: .85; }
+  .actions button.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  .actions button.ghost:hover { background: var(--hover); opacity: 1; }
 
-  footer {
-    margin-top: 28px;
-    text-align: center;
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-size: 11px;
-    color: var(--muted);
+  footer { margin-top: 30px; text-align: center; font-size: 12px; color: var(--muted); }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 28px;
+    transform: translate(-50%, 20px);
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: var(--ink); color: var(--bg);
+    font-size: 14px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    white-space: nowrap;
   }
-  @media (max-width: 380px) {
-    .card { padding: 22px 20px 20px; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (max-width: 360px) {
+    .link { padding: 10px 48px; }
+    .link svg { left: 16px; }
     .actions { flex-direction: column; }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
-  @media print {
-    body { background: #fff; padding: 0; }
-    .actions, footer { display: none; }
-    .card { box-shadow: none; }
-  }
+  @media print { .topbar, .actions, .toast { display: none; } body { background: #fff; } .link { box-shadow: none; } }
 </style>
 </head>
 <body>
-<main>
-  <section class="card" aria-label="名片">
-    <div class="card-top">
-      <div class="seal" id="seal" aria-hidden="true"></div>
-      <div class="org" id="org"></div>
+<div class="wrap">
+  <div class="topbar">
+    <div class="lang" role="group" aria-label="Language / 語言">
+      <button type="button" data-lang="zh" aria-pressed="true">中文</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
     </div>
-    <div>
-      <h1 id="name"></h1>
-      <p class="native" id="native"></p>
-      <p class="role" id="role"></p>
-    </div>
-  </section>
-
-  <ul class="contacts" id="contacts"></ul>
-
-  <div class="actions">
-    <button id="save" type="button">儲存聯絡人 (.vcf)</button>
-    <button id="share" type="button" class="ghost">複製此頁連結</button>
   </div>
 
+  <main>
+    <section class="profile">
+      <div class="avatar" id="avatar" aria-hidden="true"></div>
+      <h1 id="name"></h1>
+      <p class="alt-name" id="altName"></p>
+      <p class="tagline" id="tagline"></p>
+    </section>
+
+    <ul class="links" id="links"></ul>
+
+    <div class="actions">
+      <button id="save" type="button"></button>
+      <button id="share" type="button" class="ghost"></button>
+    </div>
+  </main>
+
   <footer id="footer"></footer>
-</main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 /* ════════════════════════════════════════════════════════════
    名片資料：只要改這一段就好。
-   不想顯示的欄位留空字串 ""，該列會自動隱藏。
+   留空字串 "" 的欄位會顯示成「待補」的灰色按鈕；補上內容後就會變成可點的連結。
    ════════════════════════════════════════════════════════════ */
 const CARD = {
-  name:     "Kychen",                 // 主要顯示名稱
-  native:   "",                       // 中文姓名（選填）
-  role:     "你的職稱／一句話介紹",      // 例：遊戲程式設計師
-  org:      "",                       // 右上角小字：學校或單位（選填）
-  email:    "your@email.com",
-  phone:    "",                       // 例：+886 912 345 678
-  github:   "bbkuan",                 // 只填帳號
-  linkedin: "",                       // 只填帳號（linkedin.com/in/ 後面那段）
-  website:  "",                       // 完整網址
-  line:     "",                       // LINE ID
-  location: ""                        // 例：Taipei, Taiwan
+  avatar:   "",                       // 大頭照檔名（例："avatar.jpg"），留空則顯示縮寫
+  initials: "KC",
+  name:     { zh: "陳冠宇", en: "Kuanyu Chen" },
+  tagline:  {
+    zh: ["營運策略", "遊戲製作", "Agentic AI 顧問"],
+    en: ["Game Production", "Live-Ops Strategy", "Agentic AI Consulting"]
+  },
+  phone:    "+886933967849",
+  email:    "bee533422@gmail.com",
+  line:     "bbkuan128",              // LINE ID
+  wechat:   "",                       // 微信 ID（待補）
+  linkedin: ""                        // LinkedIn 完整網址或 /in/ 後面的帳號（待補）
+};
+
+/* 介面文字 */
+const I18N = {
+  zh: {
+    htmlLang: "zh-Hant",
+    phone: "手機", email: "Email", line: "LINE", wechat: "微信", linkedin: "LinkedIn",
+    linkedinSub: "查看個人檔案", pending: "待補",
+    save: "儲存聯絡人", share: "分享此頁",
+    copiedWechat: "已複製微信 ID", copiedLink: "已複製連結", copyFailed: "複製失敗，請手動複製"
+  },
+  en: {
+    htmlLang: "en",
+    phone: "Mobile", email: "Email", line: "LINE", wechat: "WeChat", linkedin: "LinkedIn",
+    linkedinSub: "View profile", pending: "Coming soon",
+    save: "Save contact", share: "Share this page",
+    copiedWechat: "WeChat ID copied", copiedLink: "Link copied", copyFailed: "Couldn't copy — please copy manually"
+  }
 };
 /* ════════════════════════════════════════════════════════════ */
 
 const ICONS = {
-  email:    '<path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h15A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/>',
-  phone:    '<path d="M6.5 3h3l1.5 4.5-2 1.5a12 12 0 0 0 6 6l1.5-2L21 14.5v3A2.5 2.5 0 0 1 18.5 20 15.5 15.5 0 0 1 4 5.5 2.5 2.5 0 0 1 6.5 3z"/>',
-  github:   '<path d="M9 19c-4 1.2-4-2-6-2.5m12 5v-3.4a3 3 0 0 0-.8-2.3c2.8-.3 5.8-1.4 5.8-6.300a4.900 4.900 0 0 0-1.300-3.400 4.600 4.600 0 0 0-.1-3.400s-1.100-.3-3.500 1.300a12 12 0 0 0-6.200 0C6.500 2.400 5.400 2.700 5.400 2.700a4.600 4.600 0 0 0-.1 3.400A4.900 4.900 0 0 0 4 9.500c0 4.900 3 6 5.800 6.300a3 3 0 0 0-.8 2.300V21.500"/>',
-  linkedin: '<rect x="3" y="3" width="18" height="18" rx="2.500"/><path d="M7.500 10v7m0-10v.01M11.500 17v-4a2.500 2.500 0 0 1 5 0v4m-5-7v7"/>',
-  website:  '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/>',
-  line:     '<path d="M12 4c5 0 9 3.100 9 7s-4 7-9 7c-.6 0-1.200 0-1.800-.1L6 20.500l.6-3.400C4.400 15.800 3 13.600 3 11c0-3.900 4-7 9-7z"/>',
-  location: '<path d="M12 21s7-6.100 7-11.500a7 7 0 0 0-14 0C5 14.900 12 21 12 21z"/><circle cx="12" cy="9.500" r="2.500"/>'
+  phone:    '<path d="M6.5 3h3l1.5 4.5-2 1.5a12 12 0 0 0 6 6l1.5-2L21 14.5v3a2.5 2.5 0 0 1-2.5 2.5A15.5 15.5 0 0 1 4 5.5 2.5 2.5 0 0 1 6.5 3z"/>',
+  email:    '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/>',
+  line:     '<path d="M12 4c5 0 9 3.1 9 7s-4 7-9 7c-.6 0-1.2 0-1.8-.1L6 20.5l.6-3.4C4.400 15.800 3 13.600 3 11c0-3.900 4-7 9-7z"/><path d="M8 9.500v3h1.500M11.500 9.500v3M13.500 12.500v-3l2.500 3v-3"/>',
+  wechat:   '<path d="M9.500 4C5.900 4 3 6.400 3 9.400c0 1.700.9 3.200 2.400 4.200L4.800 16l2.500-1.300c.7.200 1.400.3 2.200.3"/><path d="M21 14.600c0-2.500-2.500-4.600-5.500-4.600S10 12.100 10 14.600s2.500 4.600 5.500 4.600c.6 0 1.200-.1 1.800-.200l2.200 1.100-.5-2c1.200-.900 2-2.100 2-3.500z"/>',
+  linkedin: '<rect x="3" y="3" width="18" height="18" rx="2.500"/><path d="M7.500 10.500V17M7.500 7v.01M11.500 17v-3.500a2.500 2.500 0 0 1 5 0V17M11.500 10.500V17"/>'
 };
 
-const ROWS = [
-  { key: "email",    label: "Email",    href: v => "mailto:" + v },
-  { key: "phone",    label: "電話",      href: v => "tel:" + v.replace(/[^\d+]/g, "") },
-  { key: "github",   label: "GitHub",   href: v => "https://github.com/" + v,          show: v => "github.com/" + v },
-  { key: "linkedin", label: "LinkedIn", href: v => "https://www.linkedin.com/in/" + v, show: v => "linkedin.com/in/" + v },
-  { key: "website",  label: "網站",      href: v => v,                                  show: v => v.replace(/^https?:\/\//, "").replace(/\/$/, "") },
-  { key: "line",     label: "LINE",     href: v => "https://line.me/ti/p/~" + encodeURIComponent(v) },
-  { key: "location", label: "所在地",    href: null }
-];
-
 const $ = id => document.getElementById(id);
-const setText = (id, value) => { const el = $(id); el.textContent = value || ""; el.hidden = !value; };
+const prettyPhone = p => p.replace(/^(\+886)(\d{3})(\d{3})(\d{3})$/, "$1 $2 $3 $4");
+const linkedinUrl = v => /^https?:\/\//.test(v) ? v : "https://www.linkedin.com/in/" + v.replace(/^\/+|\/+$/g, "");
 
-setText("name", CARD.name);
-setText("native", CARD.native);
-setText("role", CARD.role);
-setText("org", CARD.org);
-$("seal").textContent = (CARD.name || "?").trim().charAt(0).toUpperCase();
-document.title = (CARD.name || "名片") + "｜名片";
-$("footer").textContent = "© " + new Date().getFullYear() + " " + (CARD.name || "");
+/* 每一列連結的定義；value 為空的列會以「待補」顯示 */
+function rows(t) {
+  return [
+    { key: "phone",    title: t.phone,    sub: prettyPhone(CARD.phone), href: "tel:" + CARD.phone },
+    { key: "email",    title: t.email,    sub: CARD.email,              href: "mailto:" + CARD.email },
+    { key: "line",     title: t.line,     sub: "ID: " + CARD.line,      href: "https://line.me/ti/p/~" + encodeURIComponent(CARD.line), external: true },
+    { key: "wechat",   title: t.wechat,   sub: "ID: " + CARD.wechat,    copy: CARD.wechat, copiedMsg: t.copiedWechat },
+    { key: "linkedin", title: t.linkedin, sub: t.linkedinSub,           href: CARD.linkedin && linkedinUrl(CARD.linkedin), external: true }
+  ].map(r => (CARD[r.key] || "").trim() ? r : { key: r.key, title: r.title, sub: t.pending, pending: true });
+}
 
-const list = $("contacts");
-for (const row of ROWS) {
-  const value = (CARD[row.key] || "").trim();
-  if (!value) continue;
-  const li = document.createElement("li");
-  const el = document.createElement(row.href ? "a" : "div");
-  el.className = "row";
-  if (row.href) {
-    el.href = row.href(value);
-    if (/^https?:/.test(el.href)) { el.target = "_blank"; el.rel = "noopener me"; }
+let lang = "zh";
+let toastTimer;
+
+function toast(msg) {
+  const el = $("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 1800);
+}
+
+async function copyText(text, okMsg) {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast(okMsg);
+  } catch {
+    toast(I18N[lang].copyFailed);
   }
-  el.innerHTML =
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.600" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-    ICONS[row.key] + '</svg><span class="text"><span class="label"></span><span class="value"></span></span>' +
-    (row.href ? '<span class="arrow" aria-hidden="true">↗</span>' : "");
-  el.querySelector(".label").textContent = row.label;
-  el.querySelector(".value").textContent = row.show ? row.show(value) : value;
-  li.appendChild(el);
-  list.appendChild(li);
+}
+
+function render() {
+  const t = I18N[lang];
+  const other = lang === "zh" ? "en" : "zh";
+  document.documentElement.lang = t.htmlLang;
+  document.title = lang === "zh"
+    ? CARD.name.zh + " " + CARD.name.en
+    : CARD.name.en + " " + CARD.name.zh;
+
+  const avatar = $("avatar");
+  avatar.textContent = "";
+  if (CARD.avatar) {
+    const img = new Image();
+    img.src = CARD.avatar;
+    img.alt = "";
+    avatar.appendChild(img);
+  } else {
+    avatar.textContent = CARD.initials;
+  }
+
+  $("name").textContent = CARD.name[lang];
+  $("altName").textContent = CARD.name[other];
+
+  const tag = $("tagline");
+  tag.textContent = "";
+  for (const item of CARD.tagline[lang]) {
+    const s = document.createElement("span");
+    s.textContent = item;
+    tag.appendChild(s);
+  }
+
+  const list = $("links");
+  list.textContent = "";
+  for (const r of rows(t)) {
+    const li = document.createElement("li");
+    const el = document.createElement(r.pending ? "div" : r.href ? "a" : "button");
+    el.className = r.pending ? "link pending" : "link";
+    if (r.pending) {
+      el.setAttribute("aria-disabled", "true");
+    } else if (r.href) {
+      el.href = r.href;
+      if (r.external) { el.target = "_blank"; el.rel = "noopener me"; }
+    } else {
+      el.type = "button";
+      el.addEventListener("click", () => copyText(r.copy, r.copiedMsg));
+    }
+    el.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      ICONS[r.key] + '</svg><span class="title"></span><span class="sub"></span>';
+    el.querySelector(".title").textContent = r.title;
+    el.querySelector(".sub").textContent = r.sub;
+    li.appendChild(el);
+    list.appendChild(li);
+  }
+
+  $("save").textContent = t.save;
+  $("share").textContent = t.share;
+  $("footer").textContent = "© " + new Date().getFullYear() + " " + CARD.name[lang];
+
+  for (const b of document.querySelectorAll(".lang button")) {
+    b.setAttribute("aria-pressed", String(b.dataset.lang === lang));
+  }
+}
+
+/* 語言：網址 ?lang= 優先，其次上次選擇，最後看瀏覽器語言 */
+function initialLang() {
+  const q = new URLSearchParams(location.search).get("lang");
+  if (q === "zh" || q === "en") return q;
+  try {
+    const saved = localStorage.getItem("lang");
+    if (saved === "zh" || saved === "en") return saved;
+  } catch {}
+  return (navigator.language || "zh").toLowerCase().startsWith("zh") ? "zh" : "en";
+}
+
+for (const b of document.querySelectorAll(".lang button")) {
+  b.addEventListener("click", () => {
+    lang = b.dataset.lang;
+    try { localStorage.setItem("lang", lang); } catch {}
+    render();
+  });
 }
 
 /* 產生 vCard，讓手機可以一鍵存進通訊錄 */
 function buildVCard() {
   const esc = s => String(s).replace(/([\\;,])/g, "\\$1").replace(/\n/g, "\\n");
-  const lines = ["BEGIN:VCARD", "VERSION:3.0"];
-  const full = CARD.native ? CARD.native + " (" + CARD.name + ")" : CARD.name;
-  lines.push("FN:" + esc(full), "N:" + esc(full) + ";;;;");
-  if (CARD.role)     lines.push("TITLE:" + esc(CARD.role));
-  if (CARD.org)      lines.push("ORG:" + esc(CARD.org));
+  const [given, family] = CARD.name.en.split(" ");
+  const lines = [
+    "BEGIN:VCARD", "VERSION:3.0",
+    "FN:" + esc(CARD.name.zh + " " + CARD.name.en),
+    "N:" + esc(family || "") + ";" + esc(given || "") + ";;;",
+    "TITLE:" + esc(CARD.tagline.en.join(" / "))
+  ];
+  if (CARD.phone)    lines.push("TEL;TYPE=CELL:" + CARD.phone);
   if (CARD.email)    lines.push("EMAIL;TYPE=INTERNET:" + esc(CARD.email));
-  if (CARD.phone)    lines.push("TEL;TYPE=CELL:" + esc(CARD.phone));
-  if (CARD.location) lines.push("ADR;TYPE=WORK:;;" + esc(CARD.location) + ";;;;");
-  if (CARD.website)  lines.push("URL:" + CARD.website);
-  if (CARD.github)   lines.push("URL:https://github.com/" + CARD.github);
-  if (CARD.linkedin) lines.push("URL:https://www.linkedin.com/in/" + CARD.linkedin);
-  if (CARD.line)     lines.push("NOTE:LINE ID: " + esc(CARD.line));
-  lines.push("END:VCARD");
+  if (CARD.linkedin) lines.push("URL:" + linkedinUrl(CARD.linkedin));
+  const notes = [];
+  if (CARD.line)   notes.push("LINE: " + CARD.line);
+  if (CARD.wechat) notes.push("WeChat: " + CARD.wechat);
+  if (notes.length) lines.push("NOTE:" + esc(notes.join(" | ")));
+  lines.push("URL:" + location.origin + location.pathname, "END:VCARD");
   return lines.join("\r\n");
 }
 
@@ -297,23 +392,24 @@ $("save").addEventListener("click", () => {
   const blob = new Blob([buildVCard()], { type: "text/vcard;charset=utf-8" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = (CARD.name || "contact") + ".vcf";
+  a.download = CARD.name.en.replace(/\s+/g, "-") + ".vcf";
   document.body.appendChild(a);
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 });
 
-$("share").addEventListener("click", async e => {
-  const btn = e.currentTarget, original = btn.textContent;
-  try {
-    await navigator.clipboard.writeText(location.href);
-    btn.textContent = "已複製 ✓";
-  } catch {
-    btn.textContent = "複製失敗，請手動複製網址";
+$("share").addEventListener("click", async () => {
+  const url = location.origin + location.pathname;
+  if (navigator.share) {
+    try { await navigator.share({ title: document.title, url }); } catch {}
+    return;
   }
-  setTimeout(() => { btn.textContent = original; }, 1800);
+  copyText(url, I18N[lang].copiedLink);
 });
+
+lang = initialLang();
+render();
 </script>
 </body>
 </html>
