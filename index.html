@@ -128,27 +128,10 @@
     width: 22px; height: 22px; margin-top: -11px;
     color: var(--accent);
   }
-  .link.pending { cursor: default; border-style: dashed; box-shadow: none; background: transparent; }
-  .link.pending:hover { transform: none; background: transparent; border-color: var(--line); }
-  .link.pending svg, .link.pending .title { opacity: .55; }
   .link .title { font-size: 15px; font-weight: 700; }
   .link .sub { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
 
-  /* ── 動作按鈕 ─────────────────────────── */
-  .actions { display: flex; gap: 10px; margin-top: 20px; }
-  .actions button {
-    flex: 1;
-    font: inherit; font-size: 14px; font-weight: 500;
-    padding: 13px 14px;
-    border-radius: 999px;
-    border: 1px solid var(--ink);
-    background: var(--ink); color: var(--bg);
-    cursor: pointer;
-    transition: opacity .15s, background .15s;
-  }
-  .actions button:hover { opacity: .85; }
-  .actions button.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
-  .actions button.ghost:hover { background: var(--hover); opacity: 1; }
+  .hint { margin: 16px 0 0; text-align: center; font-size: 12px; color: var(--muted); }
 
   footer { margin-top: 30px; text-align: center; font-size: 12px; color: var(--muted); }
 
@@ -168,10 +151,9 @@
   @media (max-width: 360px) {
     .link { padding: 10px 48px; }
     .link svg { left: 16px; }
-    .actions { flex-direction: column; }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
-  @media print { .topbar, .actions, .toast { display: none; } body { background: #fff; } .link { box-shadow: none; } }
+  @media print { .topbar, .hint, .toast { display: none; } body { background: #fff; } .link { box-shadow: none; } }
 </style>
 </head>
 <body>
@@ -193,10 +175,7 @@
 
     <ul class="links" id="links"></ul>
 
-    <div class="actions">
-      <button id="save" type="button"></button>
-      <button id="share" type="button" class="ghost"></button>
-    </div>
+    <p class="hint" id="hint"></p>
   </main>
 
   <footer id="footer"></footer>
@@ -206,7 +185,7 @@
 <script>
 /* ════════════════════════════════════════════════════════════
    名片資料：只要改這一段就好。
-   留空字串 "" 的欄位會顯示成「待補」的灰色按鈕；補上內容後就會變成可點的連結。
+   每個按鈕點一下就會複製對應內容。留空字串 "" 的欄位會顯示「待補」，點了只會提示尚未提供。
    ════════════════════════════════════════════════════════════ */
 const CARD = {
   avatar:   "",                       // 大頭照檔名（例："avatar.jpg"），留空則顯示縮寫
@@ -228,16 +207,16 @@ const I18N = {
   zh: {
     htmlLang: "zh-Hant",
     phone: "手機", email: "Email", line: "LINE", wechat: "微信", linkedin: "LinkedIn",
-    linkedinSub: "查看個人檔案", pending: "待補",
-    save: "儲存聯絡人", share: "分享此頁",
-    copiedWechat: "已複製微信 ID", copiedLink: "已複製連結", copyFailed: "複製失敗，請手動複製"
+    pending: "待補", hint: "點一下按鈕即可複製",
+    copied: { phone: "已複製手機號碼", email: "已複製 Email", line: "已複製 LINE ID", wechat: "已複製微信 ID", linkedin: "已複製 LinkedIn 連結" },
+    notYet: "此項目尚未提供", copyFailed: "複製失敗，請手動複製"
   },
   en: {
     htmlLang: "en",
     phone: "Mobile", email: "Email", line: "LINE", wechat: "WeChat", linkedin: "LinkedIn",
-    linkedinSub: "View profile", pending: "Coming soon",
-    save: "Save contact", share: "Share this page",
-    copiedWechat: "WeChat ID copied", copiedLink: "Link copied", copyFailed: "Couldn't copy — please copy manually"
+    pending: "Coming soon", hint: "Tap a button to copy",
+    copied: { phone: "Mobile number copied", email: "Email copied", line: "LINE ID copied", wechat: "WeChat ID copied", linkedin: "LinkedIn link copied" },
+    notYet: "Not available yet", copyFailed: "Couldn't copy — please copy manually"
   }
 };
 /* ════════════════════════════════════════════════════════════ */
@@ -254,14 +233,14 @@ const $ = id => document.getElementById(id);
 const prettyPhone = p => p.replace(/^(\+886)(\d{3})(\d{3})(\d{3})$/, "$1 $2 $3 $4");
 const linkedinUrl = v => /^https?:\/\//.test(v) ? v : "https://www.linkedin.com/in/" + v.replace(/^\/+|\/+$/g, "");
 
-/* 每一列連結的定義；value 為空的列會以「待補」顯示 */
+/* 每一列按鈕的定義：sub 是顯示的文字，copy 是點擊後複製的內容；沒填的列顯示「待補」 */
 function rows(t) {
   return [
-    { key: "phone",    title: t.phone,    sub: prettyPhone(CARD.phone), href: "tel:" + CARD.phone },
-    { key: "email",    title: t.email,    sub: CARD.email,              href: "mailto:" + CARD.email },
-    { key: "line",     title: t.line,     sub: "ID: " + CARD.line,      href: "https://line.me/ti/p/~" + encodeURIComponent(CARD.line), external: true },
-    { key: "wechat",   title: t.wechat,   sub: "ID: " + CARD.wechat,    copy: CARD.wechat, copiedMsg: t.copiedWechat },
-    { key: "linkedin", title: t.linkedin, sub: t.linkedinSub,           href: CARD.linkedin && linkedinUrl(CARD.linkedin), external: true }
+    { key: "phone",    title: t.phone,    sub: prettyPhone(CARD.phone), copy: CARD.phone },
+    { key: "email",    title: t.email,    sub: CARD.email,              copy: CARD.email },
+    { key: "line",     title: t.line,     sub: "ID: " + CARD.line,      copy: CARD.line },
+    { key: "wechat",   title: t.wechat,   sub: "ID: " + CARD.wechat,    copy: CARD.wechat },
+    { key: "linkedin", title: t.linkedin, sub: CARD.linkedin && linkedinUrl(CARD.linkedin).replace(/^https?:\/\/(www\.)?/, ""), copy: CARD.linkedin && linkedinUrl(CARD.linkedin) }
   ].map(r => (CARD[r.key] || "").trim() ? r : { key: r.key, title: r.title, sub: t.pending, pending: true });
 }
 
@@ -276,13 +255,30 @@ function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove("show"), 1800);
 }
 
+/* 複製到剪貼簿：優先用 Clipboard API，失敗或不支援時改用舊式做法 */
+function legacyCopy(text) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "");
+  ta.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch {}
+  ta.remove();
+  return ok;
+}
+
 async function copyText(text, okMsg) {
+  let ok = false;
   try {
-    await navigator.clipboard.writeText(text);
-    toast(okMsg);
-  } catch {
-    toast(I18N[lang].copyFailed);
-  }
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      ok = true;
+    }
+  } catch {}
+  if (!ok) ok = legacyCopy(text);
+  toast(ok ? okMsg : I18N[lang].copyFailed);
 }
 
 function render() {
@@ -319,17 +315,13 @@ function render() {
   list.textContent = "";
   for (const r of rows(t)) {
     const li = document.createElement("li");
-    const el = document.createElement(r.pending ? "div" : r.href ? "a" : "button");
-    el.className = r.pending ? "link pending" : "link";
-    if (r.pending) {
-      el.setAttribute("aria-disabled", "true");
-    } else if (r.href) {
-      el.href = r.href;
-      if (r.external) { el.target = "_blank"; el.rel = "noopener me"; }
-    } else {
-      el.type = "button";
-      el.addEventListener("click", () => copyText(r.copy, r.copiedMsg));
-    }
+    const el = document.createElement("button");
+    el.type = "button";
+    el.className = "link";
+    el.addEventListener("click", () => {
+      if (r.pending) toast(t.notYet);          // 待補項目的暫代功能
+      else copyText(r.copy, t.copied[r.key]);
+    });
     el.innerHTML =
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
       ICONS[r.key] + '</svg><span class="title"></span><span class="sub"></span>';
@@ -339,8 +331,7 @@ function render() {
     list.appendChild(li);
   }
 
-  $("save").textContent = t.save;
-  $("share").textContent = t.share;
+  $("hint").textContent = t.hint;
   $("footer").textContent = "© " + new Date().getFullYear() + " " + CARD.name[lang];
 
   for (const b of document.querySelectorAll(".lang button")) {
@@ -366,47 +357,6 @@ for (const b of document.querySelectorAll(".lang button")) {
     render();
   });
 }
-
-/* 產生 vCard，讓手機可以一鍵存進通訊錄 */
-function buildVCard() {
-  const esc = s => String(s).replace(/([\\;,])/g, "\\$1").replace(/\n/g, "\\n");
-  const [given, family] = CARD.name.en.split(" ");
-  const lines = [
-    "BEGIN:VCARD", "VERSION:3.0",
-    "FN:" + esc(CARD.name.zh + " " + CARD.name.en),
-    "N:" + esc(family || "") + ";" + esc(given || "") + ";;;",
-    "TITLE:" + esc(CARD.tagline.en.join(" / "))
-  ];
-  if (CARD.phone)    lines.push("TEL;TYPE=CELL:" + CARD.phone);
-  if (CARD.email)    lines.push("EMAIL;TYPE=INTERNET:" + esc(CARD.email));
-  if (CARD.linkedin) lines.push("URL:" + linkedinUrl(CARD.linkedin));
-  const notes = [];
-  if (CARD.line)   notes.push("LINE: " + CARD.line);
-  if (CARD.wechat) notes.push("WeChat: " + CARD.wechat);
-  if (notes.length) lines.push("NOTE:" + esc(notes.join(" | ")));
-  lines.push("URL:" + location.origin + location.pathname, "END:VCARD");
-  return lines.join("\r\n");
-}
-
-$("save").addEventListener("click", () => {
-  const blob = new Blob([buildVCard()], { type: "text/vcard;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = CARD.name.en.replace(/\s+/g, "-") + ".vcf";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-});
-
-$("share").addEventListener("click", async () => {
-  const url = location.origin + location.pathname;
-  if (navigator.share) {
-    try { await navigator.share({ title: document.title, url }); } catch {}
-    return;
-  }
-  copyText(url, I18N[lang].copiedLink);
-});
 
 lang = initialLang();
 render();
