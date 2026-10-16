@@ -37,6 +37,7 @@
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; background: var(--bg); }
+  [hidden] { display: none !important; }
   body {
     margin: 0;
     min-height: 100vh;
@@ -51,11 +52,52 @@
     font-family: "IBM Plex Sans", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
     line-height: 1.55;
     padding: 16px 16px 48px;
+    overflow-x: hidden;
   }
   .wrap { width: 100%; max-width: 440px; margin: 0 auto; }
 
   /* ── 語言切換 ─────────────────────────── */
-  .topbar { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+
+  /* ── 分頁標籤 ─────────────────────────── */
+  .tabs { display: flex; gap: 18px; }
+  .tabs button {
+    font: inherit; font-size: 13px; font-weight: 500; letter-spacing: .06em;
+    padding: 6px 0;
+    border: 0; border-bottom: 2px solid transparent;
+    background: none; color: var(--muted);
+    cursor: pointer;
+  }
+  .tabs button[aria-current="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+
+  /* ── 左右滑動換頁 ─────────────────────── */
+  .pager {
+    display: flex; align-items: flex-start;
+    margin: 0 -16px;
+    overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .pager::-webkit-scrollbar { display: none; }
+  .page { flex: 0 0 100%; min-width: 0; padding: 0 16px; scroll-snap-align: start; scroll-snap-stop: always; }
+
+  .swipe-arrow {
+    position: fixed; top: 50%; z-index: 5;
+    width: 30px; height: 52px; margin-top: -26px;
+    display: grid; place-items: center;
+    padding: 0;
+    border: 1px solid var(--line); border-radius: 4px;
+    background: rgba(253, 252, 249, .92);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+  }
+  .swipe-arrow svg { width: 18px; height: 18px; }
+  .swipe-arrow.next { right: max(4px, calc(50% - 220px - 46px)); animation: nudge-r 1.8s ease-in-out infinite; }
+  .swipe-arrow.prev { left: max(4px, calc(50% - 220px - 46px)); animation: nudge-l 1.8s ease-in-out infinite; }
+  @keyframes nudge-r { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(4px); } }
+  @keyframes nudge-l { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-4px); } }
   .lang {
     display: inline-flex;
     padding: 2px;
@@ -161,6 +203,34 @@
   .card-back .divider { align-self: stretch; width: 1px; background: var(--back-line); }
   .card-back .copy { margin: 0; font-size: 12px; color: var(--back-muted); letter-spacing: .04em; }
 
+  /* ── 代表作品頁 ─────────────────────── */
+  .work-head { text-align: center; padding: 20px 0 26px; }
+  .eyebrow { margin: 0; font-size: 11px; font-weight: 500; letter-spacing: .24em; padding-left: .24em; color: var(--muted); }
+  .work-head h2 {
+    margin: 6px 0 0;
+    font-family: "Noto Sans TC", "IBM Plex Sans", sans-serif;
+    font-weight: 900; font-size: 28px; line-height: 1.2;
+    letter-spacing: .08em; padding-left: .08em;
+  }
+  .work-head h2:lang(en) { font-family: "IBM Plex Sans", sans-serif; font-weight: 600; letter-spacing: .01em; padding-left: 0; }
+  .role { margin: 0; font-size: 11px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  .feature, .roles {
+    background: var(--card);
+    border: 1px solid var(--line); border-radius: 4px;
+    box-shadow: var(--shadow);
+  }
+  .feature { padding: 18px 18px 16px; }
+  .feature .ttl { margin: 4px 0 0; font-size: 20px; font-weight: 600; line-height: 1.3; }
+  .feature .note { margin: 2px 0 14px; font-size: 13px; color: var(--muted); }
+  .steam { display: block; width: 100%; max-width: 646px; height: 190px; border: 0; border-radius: 2px; background: #1b2838; }
+  .roles { list-style: none; margin: 12px 0 0; padding: 0 18px; }
+  .roles li { padding: 14px 0; }
+  .roles li + li { border-top: 1px solid var(--line); }
+  .roles .ttl { margin: 3px 0 0; font-size: 16px; font-weight: 600; line-height: 1.35; }
+  .others-label { margin: 26px 0 10px; text-align: center; }
+  .others { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .others li { font-size: 13px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 2px; background: rgba(253, 252, 249, .7); }
+
   .hint { margin: 16px 0 0; text-align: center; font-size: 12px; color: var(--muted); }
 
   .toast {
@@ -205,32 +275,60 @@
     .link svg { left: 16px; }
     h1 { font-size: 32px; }
   }
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
-  @media print { .topbar, .hint, .toast { display: none; } body { background: #fff; background-image: none; } .link, .card-back { box-shadow: none; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  @media print { .topbar, .hint, .toast, .swipe-arrow { display: none; } body { background: #fff; background-image: none; } .link, .card-back { box-shadow: none; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="topbar">
+    <nav class="tabs" aria-label="頁面">
+      <button type="button" data-page="0" aria-current="true"></button>
+      <button type="button" data-page="1" aria-current="false"></button>
+    </nav>
     <div class="lang" role="group" aria-label="Language / 語言">
       <button type="button" data-lang="zh" aria-pressed="true">中文</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
     </div>
   </div>
 
-  <main>
-    <section class="profile">
-      <div class="avatar" id="avatar" aria-hidden="true"></div>
-      <h1 id="name"></h1>
-      <p class="alt-name" id="altName"></p>
-      <div class="rule" aria-hidden="true"></div>
-      <p class="tagline" id="tagline"></p>
+  <div class="pager" id="pager">
+    <!-- 第 1 頁：名片 -->
+    <main class="page" id="page-card">
+      <section class="profile">
+        <div class="avatar" id="avatar" aria-hidden="true"></div>
+        <h1 id="name"></h1>
+        <p class="alt-name" id="altName"></p>
+        <div class="rule" aria-hidden="true"></div>
+        <p class="tagline" id="tagline"></p>
+      </section>
+
+      <ul class="links" id="links"></ul>
+
+      <p class="hint" id="hint"></p>
+    </main>
+
+    <!-- 第 2 頁：代表作品 -->
+    <section class="page" id="page-work">
+      <header class="work-head">
+        <p class="eyebrow">SELECTED WORK</p>
+        <h2 id="workTitle"></h2>
+        <div class="rule" aria-hidden="true"></div>
+      </header>
+
+      <article class="feature">
+        <p class="role" id="featRole"></p>
+        <h3 class="ttl" id="featTitle"></h3>
+        <p class="note" id="featNote"></p>
+        <iframe class="steam" id="steam" loading="lazy" title="Steam"></iframe>
+      </article>
+
+      <ul class="roles" id="roles"></ul>
+
+      <p class="role others-label" id="othersLabel"></p>
+      <ul class="others" id="others"></ul>
     </section>
-
-    <ul class="links" id="links"></ul>
-
-    <p class="hint" id="hint"></p>
-  </main>
+  </div>
 
   <footer class="card-back">
     <div>
@@ -241,6 +339,8 @@
     <p class="copy" id="footer"></p>
   </footer>
 </div>
+<button type="button" class="swipe-arrow next" id="nextPage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+<button type="button" class="swipe-arrow prev" id="prevPage" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <dialog class="confirm" id="confirm" aria-labelledby="confirmTitle">
   <p class="c-title" id="confirmTitle"></p>
@@ -271,6 +371,24 @@ const CARD = {
   linkedin: "kuan-yu-chen-3948319a"   // LinkedIn 完整網址或 /in/ 後面的帳號
 };
 
+/* 代表作品：第 2 頁的內容。title / role 可以是同一段文字，或分 zh / en */
+const WORK = {
+  featured: {
+    title: "Hell-O-Word",
+    steamAppId: "4576610",            // Steam 商店頁網址裡的數字
+    role: { zh: "獨立開發者", en: "Indie Developer" },
+    note: { zh: "桌寵遊戲・開發中", en: "Desktop pet game · In development" }
+  },
+  roles: [
+    { title: { zh: "灌籃高手 SLAM DUNK", en: "SLAM DUNK" }, role: { zh: "海外全區域產品負責人", en: "Product Lead, All Overseas Regions" } },
+    { title: "極限街籃",                                     role: { zh: "海外全區域負責人", en: "Head of All Overseas Regions" } },
+    { title: "將膽–超越本格三國志",                           role: { zh: "產品主要負責人", en: "Lead Product Owner" } },
+    { title: "潘吉亞異聞錄",                                 role: { zh: "商業化顧問", en: "Monetization Consultant" } },
+    { title: { zh: "Local Warfare 系列", en: "Local Warfare series" }, role: { zh: "共同創辦人", en: "Co-founder" } }
+  ],
+  others: ["JUMP：群星集結", "漢王霸業", "三國 Revolution", "三國之奇謀天下", "攻城掠地", "宿命迴響", "遠古封神", "醉西遊", "海王捕魚"]
+};
+
 /* 介面文字（按鈕標籤與名片一致，中英文都用英文大寫） */
 const I18N = {
   zh: {
@@ -278,14 +396,18 @@ const I18N = {
     pending: "待補", hint: "點一下即可複製",
     copied: { phone: "已複製手機號碼", email: "已複製 Email", line: "已複製 LINE ID", wechat: "已複製微信 ID" },
     notYet: "此項目尚未提供", copyFailed: "複製失敗，請手動複製",
-    openTitle: "前往 LinkedIn？", cancel: "取消", go: "前往"
+    openTitle: "前往 LinkedIn？", cancel: "取消", go: "前往",
+    tabs: ["名片", "經歷"], workTitle: "代表作品", others: "其他參與專案",
+    next: "下一頁：經歷", prev: "上一頁：名片"
   },
   en: {
     htmlLang: "en",
     pending: "Coming soon", hint: "Tap to copy",
     copied: { phone: "Mobile number copied", email: "Email copied", line: "LINE ID copied", wechat: "WeChat ID copied" },
     notYet: "Not available yet", copyFailed: "Couldn't copy — please copy manually",
-    openTitle: "Open LinkedIn?", cancel: "Cancel", go: "Open"
+    openTitle: "Open LinkedIn?", cancel: "Cancel", go: "Open",
+    tabs: ["Card", "Work"], workTitle: "Selected Work", others: "Also worked on",
+    next: "Next: Work", prev: "Back: Card"
   }
 };
 /* ════════════════════════════════════════════════════════════ */
@@ -430,6 +552,8 @@ function render() {
     list.appendChild(li);
   }
 
+  renderWork(t);
+
   $("nick").textContent = CARD.nickname;
   $("backName").textContent = CARD.name.en.toUpperCase();
   $("hint").textContent = t.hint;
@@ -438,7 +562,86 @@ function render() {
   for (const b of document.querySelectorAll(".lang button")) {
     b.setAttribute("aria-pressed", String(b.dataset.lang === lang));
   }
+  document.querySelectorAll(".tabs button").forEach((b, i) => { b.textContent = t.tabs[i]; });
+  $("nextPage").setAttribute("aria-label", t.next);
+  $("prevPage").setAttribute("aria-label", t.prev);
+  updatePager();
 }
+
+const pick = v => typeof v === "string" ? v : v[lang];
+
+function renderWork(t) {
+  const f = WORK.featured;
+  $("workTitle").textContent = t.workTitle;
+  $("featRole").textContent = pick(f.role);
+  $("featTitle").textContent = pick(f.title);
+  $("featNote").textContent = pick(f.note);
+  const src = "https://store.steampowered.com/widget/" + f.steamAppId + "/";
+  if ($("steam").getAttribute("src") !== src) $("steam").src = src;
+  $("steam").title = pick(f.title) + " — Steam";
+
+  const roles = $("roles");
+  roles.textContent = "";
+  for (const r of WORK.roles) {
+    const li = document.createElement("li");
+    li.innerHTML = '<p class="role"></p><p class="ttl"></p>';
+    li.querySelector(".role").textContent = pick(r.role);
+    li.querySelector(".ttl").textContent = pick(r.title);
+    roles.appendChild(li);
+  }
+
+  $("othersLabel").textContent = t.others;
+  const others = $("others");
+  others.textContent = "";
+  for (const name of WORK.others) {
+    const li = document.createElement("li");
+    li.textContent = name;
+    others.appendChild(li);
+  }
+}
+
+/* ── 左右滑動換頁：橫向 scroll-snap，箭頭與標籤跟著目前頁面切換 ── */
+const pager = $("pager");
+const pages = [...pager.children];
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const HASHES = ["", "#work"];
+let pageIdx = 0;
+const tallest = () => Math.max(...pages.map(p => p.offsetHeight)) + "px";
+
+function goTo(i, smooth = true) {
+  i = Math.max(0, Math.min(pages.length - 1, i));
+  pager.style.height = tallest();
+  pager.scrollTo({ left: i * pager.clientWidth, behavior: smooth && !reduceMotion ? "smooth" : "auto" });
+  if (!smooth || reduceMotion) updatePager();
+}
+
+/* 高度跟著目前頁面，避免短的那頁下面空一大塊 */
+function updatePager() {
+  pageIdx = Math.round(pager.scrollLeft / pager.clientWidth) || 0;
+  pager.style.height = pages[pageIdx].offsetHeight + "px";
+  pages.forEach((p, i) => { p.inert = i !== pageIdx; });
+  document.querySelectorAll(".tabs button").forEach((b, i) => b.setAttribute("aria-current", String(i === pageIdx)));
+  $("nextPage").hidden = pageIdx >= pages.length - 1;
+  $("prevPage").hidden = pageIdx <= 0;
+  const url = location.pathname + location.search + HASHES[pageIdx];
+  if (location.pathname + location.search + location.hash !== url) history.replaceState(null, "", url);
+}
+
+let scrollTimer;
+pager.addEventListener("scroll", () => {
+  if (!scrollTimer) pager.style.height = tallest();
+  clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(() => { scrollTimer = null; updatePager(); }, 90);
+}, { passive: true });
+window.addEventListener("resize", () => goTo(pageIdx, false));
+$("nextPage").addEventListener("click", () => goTo(pageIdx + 1));
+$("prevPage").addEventListener("click", () => goTo(pageIdx - 1));
+document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => goTo(Number(b.dataset.page))));
+document.addEventListener("keydown", e => {
+  if (e.target.closest("input, textarea, dialog")) return;
+  if (e.key === "ArrowRight") goTo(pageIdx + 1);
+  if (e.key === "ArrowLeft") goTo(pageIdx - 1);
+});
 
 /* 語言：網址 ?lang= 優先，其次上次選擇，最後看瀏覽器語言 */
 function initialLang() {
@@ -459,8 +662,11 @@ for (const b of document.querySelectorAll(".lang button")) {
   });
 }
 
+const startPage = Math.max(0, HASHES.indexOf(location.hash));   // 網址 #work 直接開第 2 頁
 lang = initialLang();
 render();
+if (startPage) goTo(startPage, false);
+if (document.fonts) document.fonts.ready.then(updatePager);
 </script>
 </body>
 </html>
