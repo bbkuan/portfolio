@@ -220,6 +220,7 @@
     box-shadow: var(--shadow);
   }
   .feature { padding: 18px 18px 16px; }
+  .roles.current { margin: 0 0 12px; }
   .feature .ttl { margin: 4px 0 0; font-size: 20px; font-weight: 600; line-height: 1.3; }
   .feature .note { margin: 2px 0 14px; font-size: 13px; color: var(--muted); }
   .steam { display: block; width: 100%; max-width: 646px; height: 190px; border: 0; border-radius: 2px; background: #1b2838; }
@@ -316,6 +317,8 @@
         <div class="rule" aria-hidden="true"></div>
       </header>
 
+      <ul class="roles current" id="current"></ul>
+
       <article class="feature">
         <p class="role" id="featRole"></p>
         <h3 class="ttl" id="featTitle"></h3>
@@ -373,6 +376,7 @@ const CARD = {
 
 /* 代表作品：第 2 頁的內容。title / role 可以是同一段文字，或分 zh / en */
 const WORK = {
+  current: { role: { zh: "現職", en: "Current" }, title: { zh: "AI 產品經理", en: "AI Product Manager" } },
   featured: {
     title: "Hell-O-Word",
     steamAppId: "4576610",            // Steam 商店頁網址裡的數字
@@ -380,11 +384,11 @@ const WORK = {
     note: { zh: "桌寵遊戲・開發中", en: "Desktop pet game · In development" }
   },
   roles: [
-    { title: { zh: "灌籃高手 SLAM DUNK", en: "SLAM DUNK" }, role: { zh: "海外全區域產品負責人", en: "Product Lead, All Overseas Regions" } },
-    { title: "極限街籃",                                     role: { zh: "海外全區域負責人", en: "Head of All Overseas Regions" } },
-    { title: "將膽–超越本格三國志",                           role: { zh: "產品主要負責人", en: "Lead Product Owner" } },
+    { title: { zh: "灌籃高手 SLAM DUNK", en: "SLAM DUNK" }, role: { zh: "產品經理", en: "Product Manager" } },
+    { title: "極限街籃",                                     role: { zh: "產品經理", en: "Product Manager" } },
+    { title: "將膽–超越本格三國志",                           role: { zh: "產品經理", en: "Product Manager" } },
     { title: "潘吉亞異聞錄",                                 role: { zh: "商業化顧問", en: "Monetization Consultant" } },
-    { title: { zh: "Local Warfare 系列", en: "Local Warfare series" }, role: { zh: "共同創辦人", en: "Co-founder" } }
+    { title: { zh: "Local Warfare 系列", en: "Local Warfare series" }, role: { zh: "開發者", en: "Developer" } }
   ],
   others: ["JUMP：群星集結", "漢王霸業", "三國 Revolution", "三國之奇謀天下", "攻城掠地", "宿命迴響", "遠古封神", "醉西遊", "海王捕魚"]
 };
@@ -580,15 +584,18 @@ function renderWork(t) {
   if ($("steam").getAttribute("src") !== src) $("steam").src = src;
   $("steam").title = pick(f.title) + " — Steam";
 
-  const roles = $("roles");
-  roles.textContent = "";
-  for (const r of WORK.roles) {
-    const li = document.createElement("li");
-    li.innerHTML = '<p class="role"></p><p class="ttl"></p>';
-    li.querySelector(".role").textContent = pick(r.role);
-    li.querySelector(".ttl").textContent = pick(r.title);
-    roles.appendChild(li);
-  }
+  const fillRoles = (ul, list) => {
+    ul.textContent = "";
+    for (const r of list) {
+      const li = document.createElement("li");
+      li.innerHTML = '<p class="role"></p><p class="ttl"></p>';
+      li.querySelector(".role").textContent = pick(r.role);
+      li.querySelector(".ttl").textContent = pick(r.title);
+      ul.appendChild(li);
+    }
+  };
+  fillRoles($("current"), [WORK.current]);
+  fillRoles($("roles"), WORK.roles);
 
   $("othersLabel").textContent = t.others;
   const others = $("others");
