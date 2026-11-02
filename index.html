@@ -479,9 +479,10 @@ const WORK = {
 };
 
 /* ════════════════════════════════════════════════════════════
-   活動版本：在同一個網址切換不同場合的名片內容，沒寫到的欄位沿用上面的一般版。
-   - 預覽：網址加 ?edition=indie（加 ?edition=default 看一般版）
-   - 上線：在 SCHEDULE 加一筆起訖時間，期間內打開網址就會自動顯示該版本，時間過了自動回到一般版
+   名片版本：同一個網址可以切換不同場合的名片內容，沒寫到的欄位沿用上面的 AI PM 一般版。
+   - 目前網址預設顯示的版本：DEFAULT_EDITION（"indie" = 獨立遊戲版；改成 "" 就回到 AI PM 一般版）
+   - 預覽特定版本：網址加 ?edition=indie，或 ?edition=default 看 AI PM 一般版
+   - 限時切換：在 SCHEDULE 加一筆起訖時間，期間內優先顯示該版本
    ════════════════════════════════════════════════════════════ */
 const EDITIONS = {
   indie: {                                 // 獨立遊戲場合
@@ -505,13 +506,15 @@ const SCHEDULE = [
   // { edition: "indie", from: "2026-11-20T00:00+08:00", to: "2026-11-22T23:59+08:00" }
 ];
 
+const DEFAULT_EDITION = "indie";          // 2026-11-02 起：從 AI PM 版切換成獨立遊戲版
+
 function activeEdition() {
   const q = new URLSearchParams(location.search).get("edition");
   if (q === "default") return null;
   if (q && EDITIONS[q]) return EDITIONS[q];
   const now = Date.now();
   const hit = SCHEDULE.find(e => EDITIONS[e.edition] && now >= Date.parse(e.from) && now <= Date.parse(e.to));
-  return hit ? EDITIONS[hit.edition] : null;
+  return hit ? EDITIONS[hit.edition] : (EDITIONS[DEFAULT_EDITION] || null);
 }
 const EDITION = activeEdition() || {};
 if (EDITION.tagline) CARD.tagline = EDITION.tagline;
