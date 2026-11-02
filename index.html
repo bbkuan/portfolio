@@ -238,6 +238,7 @@
   .features { display: grid; grid-auto-rows: 1fr; gap: 12px; }
   .indie-block { margin: 0 0 22px; }
   .indie-block .others-label { margin-top: 0; }
+  .indie-block .highlight { display: flex; width: fit-content; margin: 12px auto 0; }
   .indie-block .feature { grid-template-columns: 164px 1fr; }   /* 名片頁的封面稍微放大 */
   .indie-block .feature.no-cover { grid-template-columns: 1fr; }
   .feature .ttl { word-break: keep-all; overflow-wrap: anywhere; }   /* 中文詞不被拆開（例：「系列」） */
@@ -795,6 +796,8 @@ function renderWork(t) {
   for (const id of order) wl.appendChild($(id));
   /* 沒有作品卡片的獨立作品：獨立遊戲版放在名片頁卡片下方，一般版不顯示 */
   (split ? $("indieBlock") : wl).appendChild($("indieRoles"));
+  /* 亮點（GAME JAMMER）：獨立遊戲版放在獨立遊戲卡片下方，否則留在標語下方 */
+  (split ? $("indieBlock") : document.querySelector(".profile")).appendChild($("highlight"));
   const others = $("others");
   others.textContent = "";
   for (const item of WORK.others) {
