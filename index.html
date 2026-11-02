@@ -234,6 +234,8 @@
     padding: 16px;
   }
   .feature.no-cover { grid-template-columns: 1fr; }
+  /* 作品卡片：多張時一樣高 */
+  .features { display: grid; grid-auto-rows: 1fr; gap: 12px; }
   .roles.current { margin: 0 0 12px; }
   .feature .ttl { margin: 2px 0 0; font-size: 18px; font-weight: 600; line-height: 1.3; }
   .feature .note { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
@@ -373,15 +375,7 @@
       <ul class="others" id="others"></ul>
 
       <p class="role others-label" id="sideLabel"></p>
-      <article class="feature" id="feature">
-        <img class="cover" id="featCover" alt="" loading="lazy">
-        <div>
-          <p class="role" id="featRole"></p>
-          <h3 class="ttl" id="featTitle"></h3>
-          <p class="note" id="featNote"></p>
-        </div>
-        <a class="steam-btn" id="steamLink" target="_blank" rel="noopener"><span id="steamText"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-      </article>
+      <div class="features" id="feature"></div>
       </div>
     </section>
   </div>
@@ -436,7 +430,8 @@ const WORK = {
     // Steam 封面圖（商店頁的 header.jpg）；Steam 換圖後這個網址可能失效，失效時卡片會自動不顯示圖片
     cover: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4576610/8715e34c02f6eec6d94cf1d652eeea8d3fd4b3d1/header.jpg",
     role: { zh: "獨立開發者", en: "Indie Developer" },
-    note: { zh: "桌寵遊戲・開發中", en: "Desktop pet game · In development" }
+    note: { zh: "桌寵遊戲・開發中", en: "Desktop pet game · In development" },
+    store: "steam"
   },
   roles: [
     { title: { zh: "灌籃高手 SLAM DUNK", en: "SLAM DUNK" }, role: { zh: "產品經理", en: "Product Manager" },
@@ -448,7 +443,13 @@ const WORK = {
     { title: "潘吉亞異聞錄", badge: "R18",                   role: { zh: "商業化顧問", en: "Monetization Consultant" },
       url: "https://www.4gamers.com.tw/news/detail/64044/pangea-odyssey-launch-on-erolabs-today" },
     { title: { zh: "Local Warfare 系列", en: "Local Warfare series" }, role: { zh: "開發者", en: "Developer" }, indie: true,
-      url: "https://play.google.com/store/apps/details?id=com.DazadGame.LocalWarfareRePortable" }
+      url: "https://play.google.com/store/apps/details?id=com.DazadGame.LocalWarfareRePortable",
+      /* 獨立遊戲版裡顯示成跟 Hell-O-Word 一樣的作品卡片 */
+      feature: {
+        cover: "https://play-lh.googleusercontent.com/YS3LPPuEXPtuia0sL8QyxHsN3_knsbL-RhH7gQkwZWRF_g2zkqsRiBVv2BOfyr5faUcGcEtz9Pb0ySdcsUsoPA=w920-h518-rw",
+        note: { zh: "FPS 射擊・1,000 萬+ 下載", en: "FPS shooter · 10M+ downloads" },
+        store: "googleplay"
+      } }
   ],
   /* 其他參與專案：可以只寫名稱，或寫成 { title, url } 加上連結
      （還在架上的放 Google Play，已下架的放上市新聞稿） */
@@ -506,7 +507,7 @@ const I18N = {
     copied: { phone: "已複製手機號碼", email: "已複製 Email", line: "已複製 LINE ID", wechat: "已複製微信 ID" },
     notYet: "此項目尚未提供", copyFailed: "複製失敗，請手動複製",
     openTitle: "前往 LinkedIn？", cancel: "取消", go: "前往",
-    tabs: ["名片", "經歷"], workTitle: "代表作品", others: "其他參與專案", side: "個人專案", indie: "獨立遊戲", commercial: "商業遊戲", steam: "在 Steam 加入願望清單",
+    tabs: ["名片", "經歷"], workTitle: "代表作品", others: "其他參與專案", side: "個人專案", indie: "獨立遊戲", commercial: "商業遊戲", steam: "在 Steam 加入願望清單", play: "在 Google Play 下載",
     next: "下一頁：經歷", prev: "上一頁：名片"
   },
   en: {
@@ -515,7 +516,7 @@ const I18N = {
     copied: { phone: "Mobile number copied", email: "Email copied", line: "LINE ID copied", wechat: "WeChat ID copied" },
     notYet: "Not available yet", copyFailed: "Couldn't copy — please copy manually",
     openTitle: "Open LinkedIn?", cancel: "Cancel", go: "Open",
-    tabs: ["Card", "Work"], workTitle: "Selected Work", others: "Also worked on", side: "Side Project", indie: "Indie Games", commercial: "Commercial Games", steam: "Wishlist on Steam",
+    tabs: ["Card", "Work"], workTitle: "Selected Work", others: "Also worked on", side: "Side Project", indie: "Indie Games", commercial: "Commercial Games", steam: "Wishlist on Steam", play: "Get it on Google Play",
     next: "Next: Work", prev: "Back: Card"
   }
 };
@@ -699,23 +700,33 @@ function workLink(url) {
   return a;
 }
 
-function renderWork(t) {
-  const f = WORK.featured;
-  $("workTitle").textContent = t.workTitle;
-  $("featRole").textContent = pick(f.role);
-  $("featTitle").textContent = pick(f.title);
-  $("featNote").textContent = pick(f.note);
-  $("steamLink").href = "https://store.steampowered.com/app/" + f.steamAppId + "/";
-  $("steamText").textContent = t.steam;
-  const cover = $("featCover");
-  if (f.cover && cover.getAttribute("src") !== f.cover) {
-    cover.onerror = () => { cover.hidden = true; $("feature").classList.add("no-cover"); };
-    cover.onload = updatePager;
-    cover.src = f.cover;
+const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>';
+function featureCard(f, t) {
+  const art = document.createElement("article");
+  art.className = "feature";
+  art.innerHTML = '<img class="cover" alt="" loading="lazy"><div><p class="role"></p><h3 class="ttl"></h3><p class="note"></p></div>' +
+    '<a class="steam-btn" target="_blank" rel="noopener"><span></span>' + ARROW + '</a>';
+  art.querySelector(".role").textContent = pick(f.role);
+  art.querySelector(".ttl").textContent = pick(f.title);
+  art.querySelector(".note").textContent = f.note ? pick(f.note) : "";
+  const btn = art.querySelector(".steam-btn");
+  btn.href = f.url;
+  btn.querySelector("span").textContent = f.store === "googleplay" ? t.play : t.steam;
+  const img = art.querySelector(".cover");
+  if (f.cover) {
+    img.onerror = () => { img.remove(); art.classList.add("no-cover"); updatePager(); };
+    img.onload = updatePager;
+    img.src = f.cover;
+  } else {
+    img.remove();
+    art.classList.add("no-cover");
   }
-  $("feature").classList.toggle("no-cover", !f.cover || cover.hidden);
-  cover.hidden = !f.cover || cover.hidden;
+  return art;
+}
 
+function renderWork(t) {
+  $("workTitle").textContent = t.workTitle;
+  const split = !!EDITION.splitWork;
   const fillRoles = (ul, list) => {
     ul.textContent = "";
     for (const r of list) {
@@ -739,15 +750,21 @@ function renderWork(t) {
     }
   };
   fillRoles($("current"), [WORK.current]);
-  const split = !!EDITION.splitWork;
   fillRoles($("roles"), split ? WORK.roles.filter(r => !r.indie) : WORK.roles);
-  fillRoles($("indieRoles"), split ? WORK.roles.filter(r => r.indie) : []);
+  fillRoles($("indieRoles"), split ? WORK.roles.filter(r => r.indie && !r.feature) : []);
+
+  /* 作品卡片：一般版只有 Hell-O-Word；獨立遊戲版再加上有 feature 設定的獨立作品 */
+  const feats = [{ ...WORK.featured, url: "https://store.steampowered.com/app/" + WORK.featured.steamAppId + "/" }];
+  if (split) for (const r of WORK.roles) if (r.indie && r.feature) feats.push({ title: r.title, role: r.role, url: r.url, ...r.feature });
+  const box = $("feature");
+  box.textContent = "";
+  for (const f of feats) box.appendChild(featureCard(f, t));
 
   $("othersLabel").textContent = t.others;
   $("sideLabel").textContent = split ? t.indie : t.side;
   $("commercialLabel").textContent = t.commercial;
   $("commercialLabel").hidden = !split;
-  $("indieRoles").hidden = !split;
+  $("indieRoles").hidden = !split || !$("indieRoles").children.length;
   /* 一般版：經歷 → 其他參與 → 個人專案；獨立遊戲版：獨立遊戲（Hell-O-Word + 其他獨立作品）→ 商業遊戲 → 其他參與 */
   const order = split
     ? ["sideLabel", "feature", "indieRoles", "commercialLabel", "roles", "othersLabel", "others"]
