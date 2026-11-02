@@ -252,7 +252,15 @@
   }
   .others-label { margin: 26px 0 10px; text-align: center; }
   .others { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-  .others li { font-size: 13px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 2px; background: rgba(253, 252, 249, .7); }
+  .others li { font-size: 13px; border: 1px solid var(--line); border-radius: 2px; background: rgba(253, 252, 249, .7); }
+  .others li > span, .others li > a { display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; }
+  .others li:has(a):hover { border-color: var(--accent); }
+  /* 作品連結：標題本身可點，後面接一個外部連結圖示 */
+  .work-link { color: inherit; text-decoration: none; transition: color .15s; }
+  .work-link:hover { color: var(--accent); }
+  .work-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+  .ext-icon { display: inline-block; flex: none; width: 13px; height: 13px; margin-left: 6px; vertical-align: -1px; color: var(--accent); }
+  .others .ext-icon { width: 11px; height: 11px; margin-left: 2px; vertical-align: 0; }
 
   .hint { margin: 16px 0 0; text-align: center; font-size: 12px; color: var(--muted); }
 
@@ -412,13 +420,29 @@ const WORK = {
     note: { zh: "桌寵遊戲・開發中", en: "Desktop pet game · In development" }
   },
   roles: [
-    { title: { zh: "灌籃高手 SLAM DUNK", en: "SLAM DUNK" }, role: { zh: "產品經理", en: "Product Manager" } },
-    { title: "極限街籃",                                     role: { zh: "產品經理", en: "Product Manager" } },
-    { title: "將膽–超越本格三國志",                           role: { zh: "產品經理", en: "Product Manager" } },
-    { title: "潘吉亞異聞錄", badge: "R18",                   role: { zh: "商業化顧問", en: "Monetization Consultant" } },
+    { title: { zh: "灌籃高手 SLAM DUNK", en: "SLAM DUNK" }, role: { zh: "產品經理", en: "Product Manager" },
+      url: "https://play.google.com/store/apps/details?id=com.denachina.g23002013.android" },
+    { title: "極限街籃",                                     role: { zh: "產品經理", en: "Product Manager" },
+      url: "https://gnn.gamer.com.tw/detail.php?sn=206578" },
+    { title: "將膽–超越本格三國志",                           role: { zh: "產品經理", en: "Product Manager" },
+      url: "https://game.udn.com/game/story/10456/2473272" },
+    { title: "潘吉亞異聞錄", badge: "R18",                   role: { zh: "商業化顧問", en: "Monetization Consultant" },
+      url: "https://www.4gamers.com.tw/news/detail/64044/pangea-odyssey-launch-on-erolabs-today" },
     { title: { zh: "Local Warfare 系列", en: "Local Warfare series" }, role: { zh: "開發者", en: "Developer" } }
   ],
-  others: ["JUMP：群星集結", "漢王霸業", "三國 Revolution", "三國之奇謀天下", "攻城掠地", "宿命迴響", "遠古封神", "醉西遊", "海王捕魚"]
+  /* 其他參與專案：可以只寫名稱，或寫成 { title, url } 加上連結
+     （還在架上的放 Google Play，已下架的放上市新聞稿） */
+  others: [
+    { title: "JUMP：群星集結", url: "https://n.yam.com/Article/20240328372493" },
+    { title: "漢王霸業",       url: "https://gnn.gamer.com.tw/detail.php?sn=167885" },
+    { title: "三國 Revolution", url: "https://gnn.gamer.com.tw/detail.php?sn=188766" },
+    { title: "三國之奇謀天下", url: "https://play.google.com/store/apps/details?id=com.dgames.g65002004.google" },
+    { title: "攻城掠地",       url: "https://gnn.gamer.com.tw/detail.php?sn=98693" },
+    { title: "宿命迴響",       url: "https://gnn.gamer.com.tw/detail.php?sn=252048" },
+    { title: "遠古封神",       url: "https://gnn.gamer.com.tw/detail.php?sn=59521" },
+    { title: "醉西遊",         url: "https://gnn.gamer.com.tw/detail.php?sn=70509" },
+    "海王捕魚"
+  ]
 };
 
 /* 介面文字（按鈕標籤與名片一致，中英文都用英文大寫） */
@@ -602,6 +626,17 @@ function render() {
 
 const pick = v => typeof v === "string" ? v : v[lang];
 
+/* 作品外部連結（新分頁開啟）與圖示 */
+const EXT_ICON = '<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>';
+function workLink(url) {
+  const a = document.createElement("a");
+  a.className = "work-link";
+  a.href = url;
+  a.target = "_blank";
+  a.rel = "noopener";
+  return a;
+}
+
 function renderWork(t) {
   const f = WORK.featured;
   $("workTitle").textContent = t.workTitle;
@@ -625,12 +660,18 @@ function renderWork(t) {
       const li = document.createElement("li");
       li.innerHTML = '<p class="role"></p><p class="ttl"></p>';
       li.querySelector(".role").textContent = pick(r.role);
-      li.querySelector(".ttl").textContent = pick(r.title);
+      const ttl = li.querySelector(".ttl");
+      const target = r.url ? workLink(r.url) : ttl;
+      target.appendChild(document.createTextNode(pick(r.title)));
       if (r.badge) {
         const b = document.createElement("span");
         b.className = "badge";
         b.textContent = r.badge;
-        li.querySelector(".ttl").appendChild(b);
+        target.appendChild(b);
+      }
+      if (r.url) {
+        target.insertAdjacentHTML("beforeend", EXT_ICON);
+        ttl.appendChild(target);
       }
       ul.appendChild(li);
     }
@@ -642,9 +683,14 @@ function renderWork(t) {
   $("sideLabel").textContent = t.side;
   const others = $("others");
   others.textContent = "";
-  for (const name of WORK.others) {
+  for (const item of WORK.others) {
+    const title = typeof item === "string" ? item : pick(item.title);
+    const url = typeof item === "string" ? "" : item.url;
     const li = document.createElement("li");
-    li.textContent = name;
+    const el = url ? workLink(url) : document.createElement("span");
+    el.appendChild(document.createTextNode(title));
+    if (url) el.insertAdjacentHTML("beforeend", EXT_ICON);
+    li.appendChild(el);
     others.appendChild(li);
   }
 }
