@@ -506,7 +506,7 @@ const SCHEDULE = [
   // { edition: "indie", from: "2026-11-20T00:00+08:00", to: "2026-11-22T23:59+08:00" }
 ];
 
-const DEFAULT_EDITION = "indie";          // 2026-11-02 起：從 AI PM 版切換成獨立遊戲版
+const DEFAULT_EDITION = "";               // 2026-11-17 起：切回 AI PM 版（獨立遊戲版用 ?edition=indie 查看）
 
 function activeEdition() {
   const q = new URLSearchParams(location.search).get("edition");
