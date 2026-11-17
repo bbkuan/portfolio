@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hell-O-Word 分享會連結</title>
+<meta name="description" content="【Hell-O-Word】AI 輔助開發分享：今天的簡報、Steam 商店頁、X／YouTube／Discord。">
+<meta property="og:title" content="Hell-O-Word 分享會連結">
+<meta property="og:description" content="今天的簡報、Steam 商店頁、X／YouTube／Discord">
+<meta name="theme-color" content="#0E0C12">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* 單欄三段：簡報大按鈕、Steam 官方嵌入、小連結列，最後一行試玩請託。
+     跟遊戲一樣只有深色，不跟隨系統主題。 */
+  :root {
+    color-scheme: dark;
+    --bg: #0E0C12;
+    --panel: #18151F;
+    --line: #2C2735;
+    --fg: #F2EEE8;
+    --muted: #A49DAE;
+    --accent: #7C9CFF;
+    --f-body: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--f-body); }
+  html[data-lang="zh"] [lang="en"], html[data-lang="en"] [lang="zh"], html:not([data-lang]) [lang="en"] { display: none !important; }
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+  .wrap { max-width: 680px; margin: 0 auto; padding-block: max(12px, env(safe-area-inset-top, 0px)) 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 22px; }
+
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .event { font-size: 13px; color: var(--muted); }
+  .lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; flex: none; }
+  .lang button { font: 700 13px var(--f-body); color: var(--muted); background: none; border: 0; padding: 5px 12px; border-radius: 999px; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+
+  /* 1. 簡報大按鈕 */
+  .deck { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 26px 24px; border-radius: 18px; background: var(--accent); color: #0B0D18; text-decoration: none; }
+  .deck b { display: block; font-size: clamp(24px, 6vw, 32px); font-weight: 900; line-height: 1.25; }
+  .deck small { display: block; font-size: 15px; font-weight: 500; margin-top: 4px; opacity: .8; }
+  .deck .arrow { font-size: 34px; font-weight: 900; flex: none; }
+  .deck:hover { filter: brightness(1.06); }
+
+  /* 2. Steam 官方嵌入：小工具固定 646×190，窄螢幕等比縮小 */
+  .label { font-size: 13px; color: var(--muted); margin: 0 0 8px; }
+  .steam-box { width: 100%; height: 168px; overflow: hidden; border-radius: 4px; }
+  .steam-box iframe { display: block; border: 0; width: 646px; height: 190px; transform-origin: 0 0; }
+
+  /* 3. 小連結 */
+  .social { display: flex; gap: 8px; flex-wrap: wrap; }
+  .social a { flex: 1 1 0; min-width: 120px; text-align: center; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); text-decoration: none; font-size: 14px; font-weight: 700; }
+  .social a span { display: block; font-size: 12px; font-weight: 400; color: var(--muted); }
+  .social a:hover { border-color: var(--accent); }
+
+  .ask { margin: 0; font-size: 13px; color: var(--muted); text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <span class="event"><span lang="zh">【Hell-O-Word】AI 輔助開發分享</span><span lang="en">Hell-O-Word · AI in Game Dev talk</span></span>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="btn-zh" data-set="zh">中文</button>
+      <button type="button" id="btn-en" data-set="en">EN</button>
+    </div>
+  </div>
+
+  <a class="deck" href="https://devdayhow.vercel.app/" target="_blank" rel="noopener">
+    <span>
+      <b><span lang="zh">今天的簡報在這裡</span><span lang="en">Today's slides</span></b>
+      <small><span lang="zh">完整簡報，手機也能翻</span><span lang="en">The full deck, readable on your phone</span></small>
+    </span>
+    <span class="arrow" aria-hidden="true">→</span>
+  </a>
+
+  <section aria-label="Steam">
+    <p class="label"><span lang="zh">我們的遊戲</span><span lang="en">Our game</span></p>
+    <div class="steam-box" id="steam-box">
+      <iframe src="https://store.steampowered.com/widget/4576610/" width="646" height="190" title="Hell-O-Word on Steam" loading="lazy"></iframe>
+    </div>
+  </section>
+
+  <nav class="social" aria-label="Social">
+    <a href="https://x.com/HellOWord_Game" target="_blank" rel="noopener">X<span>@HellOWord_Game</span></a>
+    <a href="https://www.youtube.com/@Hell-O-Word-Game" target="_blank" rel="noopener">YouTube<span>@Hell-O-Word-Game</span></a>
+    <a lang="zh" href="https://discord.gg/e2skRhTfcg" target="_blank" rel="noopener">Discord<span>中文社群</span></a>
+    <a lang="en" href="https://discord.com/invite/FbXsfRjZQr" target="_blank" rel="noopener">Discord<span>Community</span></a>
+  </nav>
+
+  <p class="ask"><span lang="zh">遊戲還在開發中，非常需要實測反饋，拜託大家現場找我幫忙測試！</span><span lang="en">The game is still in development and we really need playtest feedback. Please find me here and give it a try!</span></p>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+
+  // 語言：網址 #zh / #en → 上次選擇 → 系統語言
+  function pick() {
+    var h = location.hash.replace('#', '');
+    if (h === 'zh' || h === 'en') return h;
+    try { var saved = localStorage.getItem('how-talk-lang'); if (saved === 'zh' || saved === 'en') return saved; } catch (e) {}
+    var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en'];
+    return /^zh/i.test(langs[0] || '') ? 'zh' : 'en';
+  }
+  function apply(l) {
+    root.setAttribute('data-lang', l);
+    root.lang = l === 'zh' ? 'zh-Hant' : 'en';
+    document.getElementById('btn-zh').setAttribute('aria-pressed', l === 'zh');
+    document.getElementById('btn-en').setAttribute('aria-pressed', l === 'en');
+  }
+  apply(pick());
+  [].forEach.call(document.querySelectorAll('.lang button'), function (b) {
+    b.addEventListener('click', function () {
+      apply(b.dataset.set);
+      try { localStorage.setItem('how-talk-lang', b.dataset.set); } catch (e) {}
+    });
+  });
+
+  // Steam 小工具寬度固定 646px，手機上等比縮小塞進欄寬
+  var box = document.getElementById('steam-box');
+  var frame = box.querySelector('iframe');
+  function fit() {
+    var s = Math.min(1, box.clientWidth / 646);
+    frame.style.transform = 'scale(' + s + ')';
+    // 小工具內容約 168px 高，下方是 iframe 的白底，裁掉
+    box.style.height = Math.ceil(168 * s) + 'px';
+  }
+  addEventListener('resize', fit);
+  fit();
+})();
+</script>
+</body>
+</html>
