@@ -56,7 +56,15 @@
 
   /* 標頭：logo＋活動名 */
   .brand { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
-  .brand img { width: min(420px, 86%); height: auto; filter: drop-shadow(0 6px 0 rgba(0, 0, 0, .55)); }
+  /* 遊戲名稱：一排字母磁磚，跟下面的元件同一套 */
+  .name { margin: 6px 0 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 5px; }
+  .name i, .name b { font: normal 30px/1 var(--f-en); }
+  .name i { width: 38px; height: 44px; display: grid; place-items: center; border: 3px solid var(--ink); border-radius: 6px 8px 5px 9px; background: var(--paper); color: var(--ink); box-shadow: 0 4px 0 var(--ink); }
+  .name i:nth-of-type(3n+1) { transform: rotate(-4deg); }
+  .name i:nth-of-type(3n+2) { transform: rotate(3deg) translateY(-3px); }
+  .name i:nth-of-type(5) { background: var(--fire); }
+  .name b { color: var(--paper); }
+  @media (max-width: 420px) { .name { gap: 3px; } .name i { width: 28px; height: 34px; } .name i, .name b { font-size: 22px; } }
   .brand .event { display: inline-block; padding: 4px 14px; border: 3px solid var(--ink); border-radius: 999px; background: var(--ember); color: var(--paper); font-weight: 900; font-size: 15px; box-shadow: 3px 4px 0 var(--ink); transform: rotate(-1.5deg); }
 
   /* 1. 簡報：最大顆的米色磁磚 */
@@ -116,7 +124,7 @@
   </div>
 
   <header class="brand">
-    <img src="logo.png" alt="Hell-O-Word" width="900" height="280">
+    <h1 class="name" aria-label="Hell-O-Word"><i>H</i><i>E</i><i>L</i><i>L</i><b>-</b><i>O</i><b>-</b><i>W</i><i>O</i><i>R</i><i>D</i></h1>
     <span class="event"><span lang="zh">AI 輔助開發分享</span><span lang="en">AI in Game Dev · Talk</span></span>
   </header>
 
